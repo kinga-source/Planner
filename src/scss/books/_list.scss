@@ -1,0 +1,12 @@
+.books{
+  border: 0;
+  thead{
+    background: $primary_color;
+  }
+  td{
+    padding: 10px 30px;
+    a {
+      padding-right: 10px;
+    }
+  }
+}
