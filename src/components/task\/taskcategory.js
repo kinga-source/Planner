@@ -1,30 +1,48 @@
-import React, {useState, useEffect} from 'react';
-import {BookListItem} from "./BookListItem";
-import {BookApiService} from "../../services/BookApiService";
+import React, {
+    useState,
+    useEffect
+} from 'react';
+import {
+    TaskListItem
+} from "./TaskListItem";
+import {
+    TaskApiService
+} from "../../services/TaskApiService";
 
-export const BookList = () => {
-    const [books, setBooks] = useState([]);
+export const TaskList = () => {
+        const [tasks, setBooks] = useState([]);
 
-    useEffect( () => {
-        BookApiService.getAllBooks(
-            books => setBooks(books),
-            err => console.log(err)
-        )
-    },[])
+        useEffect(() => {
+            TaskApiService.getAllTasks(
+                tasks => setBooks(tasks),
+                err => console.log(err)
+            )
+        }, [])
 
-    if (books.length === 0) return null;
-    return (
-        <table className={"books"}>
-            <thead>
-            <tr>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Operation</th>
-            </tr>
-            </thead>
-            <tbody>
-                {books.map(book => <BookListItem book={book} key={book.id}/>)}
-            </tbody>
-        </table>
-    )
-}
+        if (tasks.length === 0) return null;
+        return ( <
+                table className = {
+                    "tasks"
+                } >
+                <
+                thead >
+                <
+                tr >
+                <
+                th > Title < /th>
+
+                <
+                /tr> < /
+                thead > <
+                tbody > {
+                    tasks.map(tasks => < TaskListItem task = {
+                            task
+                        }
+                        key = {
+                            task.id
+                        }
+                        />)} < /
+                        tbody > <
+                        /table>
+                    )
+                }

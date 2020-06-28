@@ -1,8 +1,8 @@
-export class BookApiService {
+export class TaskApiService {
     static API_URL = "http://localhost:3000";
 
-    static getAllBooks(successCallback, errorCallback) {
-        fetch(`${BookApiService.API_URL}/books`)
+    static getAllTasks(successCallback, errorCallback) {
+        fetch(`${TaskApiService.API_URL}/tasks`)
             .then(resp => resp.json())
             .then(data => {
                 if (typeof successCallback === 'function') {
@@ -16,11 +16,10 @@ export class BookApiService {
             })
     }
 
-    static addBook(book, successCallback, errorCallback) {
-        fetch(`${BookApiService.API_URL}/books`,
-            {
+    static addTask(task, successCallback, errorCallback) {
+        fetch(`${TaskApiService.API_URL}/tasks`, {
                 method: "POST",
-                body: JSON.stringify(book),
+                body: JSON.stringify(task),
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -38,15 +37,14 @@ export class BookApiService {
             })
     }
 
-    static updateBook(book, successCallback, errorCallback) {
-        if (!book.id) {
-            throw new Error('Given book doesn`t have id - it can not be updated');
+    static updateTask(task, successCallback, errorCallback) {
+        if (!task.id) {
+            throw new Error('Given task doesn`t have id - it can not be updated');
         }
 
-        fetch(`${BookApiService.API_URL}/books/${book.id}`,
-            {
+        fetch(`${TaskApiService.API_URL}/tasks/${task.id}`, {
                 method: "PUT",
-                body: JSON.stringify(book),
+                body: JSON.stringify(task),
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -64,13 +62,12 @@ export class BookApiService {
             })
     }
 
-    static deleteBook(book, successCallback, errorCallback) {
-        if (!book.id) {
-            throw new Error('Given book doesn`t have id - it can not be deleted');
+    static deleteTask(task, successCallback, errorCallback) {
+        if (!task.id) {
+            throw new Error('Given task doesn`t have id - it can not be deleted');
         }
 
-        fetch(`${BookApiService.API_URL}/books/${book.id}`,
-            {
+        fetch(`${TaskApiService.API_URL}/tasks/${task.id}`, {
                 method: "DELETE",
                 headers: {
                     'Content-Type': 'application/json'

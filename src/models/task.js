@@ -1,5 +1,4 @@
-export class Book{
+export class Task {
     id = null;
     title = "";
-    author = "";
 }
