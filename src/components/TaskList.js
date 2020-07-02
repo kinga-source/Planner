@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function TaskList(props) {
-  const { filter = '' } = props; //domyslnie pusty string aby zapobiec bledom
+  const { filter = '' } = props;
   const classes = useStyles();
   const [editMode, setEditMode] = useState({
     editID: null,
@@ -164,7 +164,7 @@ export default function TaskList(props) {
     ));
     return mappedTasks;
   }
-//bedzie filtrowac taski na podstawie tego parametru
+
   const filterTasks = (tasks) => !filter ? tasks : tasks.filter(task =>
       task.title.toUpperCase().includes(filter.toUpperCase()) || task.description.toUpperCase().includes(filter.toUpperCase()))
 
@@ -184,7 +184,7 @@ export default function TaskList(props) {
           </Typography>
         </div>
         <List className={classes.root}>
-          {renderTasks(filterTasks(tasks))} //wywolanie filter task
+          {renderTasks(filterTasks(tasks))}
         </List>
       </div>
   );

@@ -139,7 +139,7 @@ export default function HomePage(props) {
         </nav>
         <main className={classes.content}>
           <div className={classes.toolbar} />
-          <TaskList filter={filter} />//przekazana jako parametr filter
+          <TaskList filter={filter} />
         </main>
       </div>
   );
