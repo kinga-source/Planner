@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
@@ -16,31 +16,40 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
-    backgroundColor: theme.palette.background.paper
+    backgroundColor: theme.palette.background.paper,
   },
   demo: {
-    width: "100%"
+    width: "100%",
   },
   calendarbtn: {
     backgroundColor: "#007b83",
     color: "#ffffff",
     "&:hover": {
-      backgroundColor: "#007b83"
-    }
-  }
+      backgroundColor: "#007b83",
+    },
+  },
 }));
 
-export default function StatusList(props) {
+export default function StatusInfo(props) {
   const { tasks } = props;
+
   const classes = useStyles();
   let history = useHistory();
 
+ //NAVIGATION TO CALENDAR
   function handleClick() {
     history.push("/calendar");
   }
+
+  const doneArray = tasks.filter((task) => task.done === "done");
+  const inProgressArray = tasks.filter((task) =>
+    task.inprogress === "inprogress"
+  );
+
+  console.log("result", doneArray);
 
   return (
     <div>
@@ -85,7 +94,10 @@ export default function StatusList(props) {
               <FlareIcon />
             </Avatar>
           </ListItemAvatar>
-          <ListItemText primary="In Progress" secondary="0 tasks in progress" />
+          <ListItemText
+            primary="In Progress"
+            secondary={`${inProgressArray.length} - In Progress`}
+          />
         </ListItem>
         <Divider variant="inset" component="li" />
         <ListItem>
@@ -94,7 +106,10 @@ export default function StatusList(props) {
               <DoneAllIcon />
             </Avatar>
           </ListItemAvatar>
-          <ListItemText primary="Done" secondary="0 tasks done" />
+          <ListItemText
+            primary="Done"
+            secondary={`${doneArray.length} - Done`}
+          />
         </ListItem>
       </List>
     </div>

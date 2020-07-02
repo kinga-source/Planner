@@ -1,144 +1,191 @@
-import React, { Fragment, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useState, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Divider from "@material-ui/core/Divider";
+import InputLabel from "@material-ui/core/InputLabel";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
+import FormControl from "@material-ui/core/FormControl";
 import ListItemText from "@material-ui/core/ListItemText";
 import Typography from "@material-ui/core/Typography";
-import StatusList from "./StatusList";
-import Button from "@material-ui/core/Button";
+import StatusInfo from "./StatusInfo";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import { useAppState } from "../context/StateContext";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
-    backgroundColor: theme.palette.background.paper
+    backgroundColor: theme.palette.background.paper,
   },
   inline: {
-    display: "inline"
-  }
+    display: "inline",
+  },
 }));
 
 export default function TaskList(props) {
+  const { filter = '' } = props; //domyslnie pusty string aby zapobiec bledom
+  const classes = useStyles();
+  const [editMode, setEditMode] = useState({
+    editID: null,
+    editmodus: false,
+    title: "",
+    description: "",
+  });
   const {
     tasks,
     setTasks,
-    editTitle,
     setEditTitle,
+    editTitle,
+    setStatus,
+    status,
     editDescription,
-    setEditDescription
+    setEditDescription,
   } = useAppState();
 
-  const [open, setOpen] = React.useState(false);
-
-  useEffect(() => {}, [editTitle, editDescription, tasks]);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const classes = useStyles();
-  let history = useHistory();
-
-  function goToEditScreen() {
-    setEditTitle("PleaseEditMe");
-    history.push("/add-task");
-  }
-
-  const removeTask = index => {
+//remove function
+  const removeTask = (index) => {
     const newTodos = [...tasks];
     newTodos.splice(index, 1);
     setTasks(newTodos);
   };
 
-//to jest hardcoded do testowania zanim bedzie na stale w state data
-  const editTask = id => {
-    const newArr = tasks.map(tsk => {
-      if (tsk.id === id) {
-        return { ...tsk, title: "HOLOGRAM" };
-      }
-      return tsk;
+  //edit function
+  const editTask = (e, index) => {
+    e.preventDefault();
+    const newTodos = [...tasks];
+    newTodos[index].title = editTitle;
+    newTodos[index].description = editDescription;
+
+    setTasks(newTodos);
+    setEditMode({
+      editID: null,
+      editmodus: false,
+      title: "",
+      description: "",
     });
-    setTasks(newArr);
+    setEditTitle("");
+    setEditDescription("");
   };
 
-  return (
-    <div>
-      <StatusList tasks={tasks} />
-      <Typography variant="h5" component="h2">
-        My Tasks
-      </Typography>
-      <List className={classes.root}>
-        {tasks.map((task, index) => (
-          <div>
+//changing to editing
+  const runEditMode = ({ title, description, taskid, editmodus }) => {
+    setEditTitle(title);
+    setEditDescription(description);
+    setEditMode(
+        {
+          editID: taskid,
+          editmodus: editmodus,
+        },
+    );
+  };
+
+  const renderTasks = (tasks) => {
+    const mappedTasks = tasks.map((task, index) => (
+        <Fragment>
+          <div
+              style={editMode.editmodus === true ? { display: "none" } : null}
+          >
             <ListItem alignItems="flex-start">
-              <ListItemText primary={task.title} secondary={task.description} />
-              <IconButton onClick={handleClickOpen} aria-label="delete">
+              <ListItemText
+                  primary={task.title}
+                  secondary={task.description}
+              />
+              <IconButton
+                  onClick={() =>
+                      runEditMode(
+                          {
+                            title: task.title,
+                            description: task.description,
+                            taskid: task.id,
+                            editmodus: true,
+                          },
+                      )}
+              >
                 <EditIcon />
               </IconButton>
-              <IconButton onClick={() => removeTask(index)} aria-label="delete">
+              <IconButton onClick={() => removeTask(index)}>
                 <DeleteIcon />
               </IconButton>
             </ListItem>
             <Divider />
-            <Dialog
-              open={open}
-              onClose={handleClose}
-              aria-labelledby="form-dialog-title"
-            >
-              <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
-              <DialogContent>
-                <DialogContentText>
-                  To subscribe to this website, please enter your email address
-                  here. We will send updates occasionally.
-                </DialogContentText>
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  id="name"
-                  label="Title"
-                  type="text"
-                  fullWidth
-                  value={editTitle}
-                  onChange={e => setEditTitle(e.target.value)}
-                />
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  id="name"
-                  label="Description"
-                  type="text"
-                  fullWidth
-                  value={editDescription}
-                  onChange={e => setEditDescription(e.target.value)}
-                />
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={handleClose} color="primary">
-                  Cancel
-                </Button>
-                <Button onClick={() => editTask(task)} color="primary">
-                  Edit
-                </Button>
-              </DialogActions>
-            </Dialog>
           </div>
-        ))}
-      </List>
-    </div>
+          <div
+              style={editMode.editID !== task.id ? { display: "none" } : null}
+          >
+            <TextField
+                margin="dense"
+                label="Title"
+                type="text"
+                fullWidth
+                variant="outlined"
+                value={editTitle === "" ? task.title : editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+            />
+            <TextField
+                margin="dense"
+                label="Description"
+                type="text"
+                multiline
+                rowsMax={4}
+                fullWidth
+                variant="outlined"
+                value={editDescription === ""
+                    ? task.description
+                    : editDescription}
+                onChange={(e) => setEditDescription(e.target.value)}
+            />
+            <FormControl variant="outlined" className={classes.formControl}>
+              <InputLabel id="demo-simple-select-outlined-label">
+                Age
+              </InputLabel>
+              <Select
+                  labelId="demo-simple-select-outlined-label"
+                  id="demo-simple-select-outlined"
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  label="Status"
+              >
+                <MenuItem value="">
+                  <em>None</em>
+                </MenuItem>
+                <MenuItem value={10}>Done</MenuItem>
+                <MenuItem value={20}>In Progress</MenuItem>
+              </Select>
+            </FormControl>
+            <button onClick={(e) => editTask(e, index)}>
+              <p>EDIT</p>
+            </button>
+          </div>
+        </Fragment>
+    ));
+    return mappedTasks;
+  }
+//bedzie filtrowac taski na podstawie tego parametru
+  const filterTasks = (tasks) => !filter ? tasks : tasks.filter(task =>
+      task.title.toUpperCase().includes(filter.toUpperCase()) || task.description.toUpperCase().includes(filter.toUpperCase()))
+
+  return (
+      <div>
+        <Typography
+            variant="h5"
+            component="h2"
+            style={editMode.editmodus === false ? { display: "none" } : null}
+        >
+          Edit Task
+        </Typography>
+        <div style={editMode.editmodus === true ? { display: "none" } : null}>
+          <StatusInfo tasks={tasks} />
+          <Typography variant="h5" component="h2">
+            My Tasks
+          </Typography>
+        </div>
+        <List className={classes.root}>
+          {renderTasks(filterTasks(tasks))} //wywolanie filter task
+        </List>
+      </div>
   );
 }
