@@ -18,8 +18,8 @@ const StateProvider = (props) => {
     },
       {
           id: 2,
-          title: "BUY TOYS FOR JASMINE",
-          description: "TRACTOR",
+          title: "BUY NEW CAR",
+          description: "AUDI",
           done: "",
           inprogress: "IN PROGRESS",
       },

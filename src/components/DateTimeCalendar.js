@@ -5,7 +5,7 @@ import moment from 'moment';
 const events = [
   {
     id: 11,
-    title: 'URODZINKI JAŚMINKI',
+    title: 'birthday party',
     start: new Date(2020, 10, 11, 7, 0, 0),
     end: new Date(2020, 10, 11, 12, 0, 0),
   },
